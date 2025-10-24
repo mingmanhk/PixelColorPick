@@ -595,23 +595,7 @@ struct ContentView: View {
         .padding(.horizontal, 20) // Reduced from 30
         .padding(.vertical, 12)   // Reduced from 30
         .frame(minWidth: 420, minHeight: 480) // Reduced from 500x600
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    if let url = URL(string: "https://buymeacoffee.com/mingmanhk") {
-                        NSWorkspace.shared.open(url)
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "cup.and.saucer.fill")
-                        Text("Donate")
-                    }
-                    .foregroundColor(.orange)
-                }
-                .buttonStyle(.borderless)
-                .help("Buy me a coffee ☕")
-            }
-        }
+
         .task {
             if preferences.showColorSamplerOnOpen {
                 try? await Task.sleep(nanoseconds: 500_000_000)
