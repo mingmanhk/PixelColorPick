@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		991ECE012EAB072C00BB7684 /* privacy-policy.html in Resources */ = {isa = PBXBuildFile; fileRef = 991ECE002EAB072C00BB7684 /* privacy-policy.html */; };
 		99A127FF2EA86F1700623BA5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FB2EA86F1700623BA5 /* LICENSE */; };
 		99A128002EA86F1700623BA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FC2EA86F1700623BA5 /* README.md */; };
 		99A1280C2EA871F900623BA5 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */; };
@@ -39,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		991ECE002EAB072C00BB7684 /* privacy-policy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "privacy-policy.html"; sourceTree = "<group>"; };
 		99A127FB2EA86F1700623BA5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		99A127FC2EA86F1700623BA5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		99A1280A2EA871ED00623BA5 /* SimpleColorPicker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleColorPicker.entitlements; sourceTree = "<group>"; };
@@ -52,7 +54,6 @@
 		99C070372EAAE23A00FFFC7C /* icon512x512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon512x512.png; sourceTree = "<group>"; };
 		99C070382EAAE23A00FFFC7C /* icon1024x1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon1024x1024.png; sourceTree = "<group>"; };
 		99C070412EAAE52600FFFC7C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		99C070432EAAE52B00FFFC7C /* SimpleColorPicker 2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SimpleColorPicker 2.entitlements"; sourceTree = "<group>"; };
 		99C070542EAAE69000FFFC7C /* PixelPick.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PixelPick.entitlements; sourceTree = "<group>"; };
 		99DA74162EA8203000A30637 /* PixelPick.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPick.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DA74252EA8203600A30637 /* PixelPickTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPickTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +120,7 @@
 		99DA740D2EA8203000A30637 = {
 			isa = PBXGroup;
 			children = (
+				991ECE002EAB072C00BB7684 /* privacy-policy.html */,
 				99DA74182EA8203000A30637 /* PixelPick */,
 				99DA74282EA8203600A30637 /* PixelPickTests */,
 				99DA74322EA8203600A30637 /* PixelPickUITests */,
@@ -130,7 +132,6 @@
 				99A1280D2EA8759300623BA5 /* screenshot.png */,
 				99C070392EAAE23A00FFFC7C /* Resources */,
 				99C070412EAAE52600FFFC7C /* Info.plist */,
-				99C070432EAAE52B00FFFC7C /* SimpleColorPicker 2.entitlements */,
 				99C070542EAAE69000FFFC7C /* PixelPick.entitlements */,
 			);
 			sourceTree = "<group>";
@@ -277,6 +278,7 @@
 				99A128002EA86F1700623BA5 /* README.md in Resources */,
 				99A1280E2EA8759300623BA5 /* screenshot.png in Resources */,
 				99C070422EAAE52600FFFC7C /* Info.plist in Resources */,
+				991ECE012EAB072C00BB7684 /* privacy-policy.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
