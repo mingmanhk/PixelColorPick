@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "99DA74152EA8203000A30637"
-               BuildableName = "PixelPick.app"
-               BlueprintName = "PixelPick"
-               ReferencedContainer = "container:PixelPick.xcodeproj">
+               BuildableName = "PixelColorPick.app"
+               BlueprintName = "PixelColorPick"
+               ReferencedContainer = "container:PixelColorPick.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "99DA74242EA8203600A30637"
-               BuildableName = "PixelPickTests.xctest"
-               BlueprintName = "PixelPickTests"
-               ReferencedContainer = "container:PixelPick.xcodeproj">
+               BuildableName = "PixelColorPickTests.xctest"
+               BlueprintName = "PixelColorPickTests"
+               ReferencedContainer = "container:PixelColorPick.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "99DA742E2EA8203600A30637"
-               BuildableName = "PixelPickUITests.xctest"
-               BlueprintName = "PixelPickUITests"
-               ReferencedContainer = "container:PixelPick.xcodeproj">
+               BuildableName = "PixelColorPickUITests.xctest"
+               BlueprintName = "PixelColorPickUITests"
+               ReferencedContainer = "container:PixelColorPick.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "99DA74152EA8203000A30637"
-            BuildableName = "PixelPick.app"
-            BlueprintName = "PixelPick"
-            ReferencedContainer = "container:PixelPick.xcodeproj">
+            BuildableName = "PixelColorPick.app"
+            BlueprintName = "PixelColorPick"
+            ReferencedContainer = "container:PixelColorPick.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "99DA74152EA8203000A30637"
-            BuildableName = "PixelPick.app"
-            BlueprintName = "PixelPick"
-            ReferencedContainer = "container:PixelPick.xcodeproj">
+            BuildableName = "PixelColorPick.app"
+            BlueprintName = "PixelColorPick"
+            ReferencedContainer = "container:PixelColorPick.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

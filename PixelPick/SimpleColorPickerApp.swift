@@ -1,6 +1,6 @@
 //
-//  PixelPickApp.swift
-//  PixelPick
+//  PixelColorPickApp.swift
+//  PixelColorPick
 //
 //  Created by Victor Lam on 10/21/25.
 //
@@ -12,7 +12,7 @@ import Combine
 import ServiceManagement
 
 @main
-struct PixelPickApp: App {
+struct PixelColorPickApp: App {
     @StateObject private var preferences = Preferences()
     @State private var preferencesWindow: NSWindow?
     
@@ -75,3 +75,4 @@ struct PixelPickApp: App {
         NSApp.activate(ignoringOtherApps: true)
     }
 }
+

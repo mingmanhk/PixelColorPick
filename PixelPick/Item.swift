@@ -1,6 +1,6 @@
 //
 //  Item.swift
-//  SimpleColorPicker
+//  PixelColorPick
 //
 //  Created by Victor Lam on 10/21/25.
 //
