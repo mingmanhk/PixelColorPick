@@ -11,7 +11,7 @@
 		99A127FF2EA86F1700623BA5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FB2EA86F1700623BA5 /* LICENSE */; };
 		99A128002EA86F1700623BA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FC2EA86F1700623BA5 /* README.md */; };
 		99A1280C2EA871F900623BA5 /* PRIVACY_POLICY.md in Resources */ = {isa = PBXBuildFile; fileRef = 99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */; };
-		99A1280E2EA8759300623BA5 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 99A1280D2EA8759300623BA5 /* screenshot.png */; };
+		99A1280E2EA8759300623BA5 /* Screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 99A1280D2EA8759300623BA5 /* Screenshot.png */; };
 		99C0703A2EAAE23A00FFFC7C /* icon256x256.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C070362EAAE23A00FFFC7C /* icon256x256.png */; };
 		99C0703B2EAAE23A00FFFC7C /* icon16x16.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C070322EAAE23A00FFFC7C /* icon16x16.png */; };
 		99C0703C2EAAE23A00FFFC7C /* icon64x64.png in Resources */ = {isa = PBXBuildFile; fileRef = 99C070342EAAE23A00FFFC7C /* icon64x64.png */; };
@@ -45,7 +45,7 @@
 		99A127FC2EA86F1700623BA5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		99A1280A2EA871ED00623BA5 /* SimpleColorPicker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleColorPicker.entitlements; sourceTree = "<group>"; };
 		99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
-		99A1280D2EA8759300623BA5 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
+		99A1280D2EA8759300623BA5 /* Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot.png; sourceTree = "<group>"; };
 		99C070322EAAE23A00FFFC7C /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon16x16.png; sourceTree = "<group>"; };
 		99C070332EAAE23A00FFFC7C /* icon32x32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon32x32.png; sourceTree = "<group>"; };
 		99C070342EAAE23A00FFFC7C /* icon64x64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon64x64.png; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 				99A127FC2EA86F1700623BA5 /* README.md */,
 				99A1280A2EA871ED00623BA5 /* SimpleColorPicker.entitlements */,
 				99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */,
-				99A1280D2EA8759300623BA5 /* screenshot.png */,
+				99A1280D2EA8759300623BA5 /* Screenshot.png */,
 				99C070392EAAE23A00FFFC7C /* Resources */,
 				99C070542EAAE69000FFFC7C /* PixelPick.entitlements */,
 			);
@@ -277,7 +277,7 @@
 				99C070402EAAE23A00FFFC7C /* icon1024x1024.png in Resources */,
 				99A127FF2EA86F1700623BA5 /* LICENSE in Resources */,
 				99A128002EA86F1700623BA5 /* README.md in Resources */,
-				99A1280E2EA8759300623BA5 /* screenshot.png in Resources */,
+				99A1280E2EA8759300623BA5 /* Screenshot.png in Resources */,
 				991ECE012EAB072C00BB7684 /* privacy-policy.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
