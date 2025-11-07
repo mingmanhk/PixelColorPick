@@ -5,7 +5,7 @@
 	<key>CFBundleVersion</key>
 	<string>5</string>
 	<key>CFBundleShortVersionString</key>
-	<string>5</string>
+	<string>1.3.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>Pixel Color Picker</string>
 	<key>LSApplicationCategoryType</key>
