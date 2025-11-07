@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>5</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-    <key>CFBundleDisplayName</key>
-    <string>Pixel Color Picker</string>
+	<string>5</string>
+	<key>CFBundleDisplayName</key>
+	<string>Pixel Color Picker</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 </dict>
