@@ -238,7 +238,7 @@ struct PreferencesView: View {
                 .padding(.bottom, 16)
             }
         }
-        .frame(width: 480, height: 540)
+        .frame(width: 480, height: 720)
         .background(Color(NSColor.windowBackgroundColor))
     }
 }
@@ -579,8 +579,8 @@ struct ContentView: View {
                 }
             }
         }
-        .frame(width: 520, height: 600)
-        .navigationTitle("Color Picker")
+        .frame(width: 520, height: 780)
+        .navigationTitle("Pixel Color Picker")
         .task {
             guard preferences.showColorSamplerOnOpen else { return }
             try? await Task.sleep(nanoseconds: 500_000_000)
@@ -593,14 +593,26 @@ struct ContentView: View {
     // MARK: - Header Section View
     private var headerSection: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Color Picker")
-                    .font(.title)
-                    .fontWeight(.bold)
+            HStack(spacing: 12) {
+                // App Icon
+                if let appIcon = NSImage(named: "AppIcon") {
+                    Image(nsImage: appIcon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 48, height: 48)
+                        .cornerRadius(10)
+                        .shadow(color: Color.black.opacity(0.15), radius: 3, x: 0, y: 2)
+                }
                 
-                Text("Select and copy colors in multiple formats")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Pixel Color Picker")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Text("Select and copy colors in multiple formats")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             
             Spacer()

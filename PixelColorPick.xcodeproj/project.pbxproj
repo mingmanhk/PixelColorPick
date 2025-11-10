@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		990C804E2EC256670077E6E7 /* Perference.png in Resources */ = {isa = PBXBuildFile; fileRef = 990C804B2EC256670077E6E7 /* Perference.png */; };
+		990C804F2EC256670077E6E7 /* Pixel Color Pick.png in Resources */ = {isa = PBXBuildFile; fileRef = 990C804C2EC256670077E6E7 /* Pixel Color Pick.png */; };
+		990C80502EC256670077E6E7 /* PixelColorPicker.png in Resources */ = {isa = PBXBuildFile; fileRef = 990C804D2EC256670077E6E7 /* PixelColorPicker.png */; };
+		990C80562EC2597C0077E6E7 /* README 2.md in Resources */ = {isa = PBXBuildFile; fileRef = 990C80552EC2597C0077E6E7 /* README 2.md */; };
 		991ECE012EAB072C00BB7684 /* privacy-policy.html in Resources */ = {isa = PBXBuildFile; fileRef = 991ECE002EAB072C00BB7684 /* privacy-policy.html */; };
 		99A127FF2EA86F1700623BA5 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FB2EA86F1700623BA5 /* LICENSE */; };
 		99A128002EA86F1700623BA5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 99A127FC2EA86F1700623BA5 /* README.md */; };
@@ -40,6 +44,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		990C804B2EC256670077E6E7 /* Perference.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Perference.png; sourceTree = "<group>"; };
+		990C804C2EC256670077E6E7 /* Pixel Color Pick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pixel Color Pick.png"; sourceTree = "<group>"; };
+		990C804D2EC256670077E6E7 /* PixelColorPicker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PixelColorPicker.png; sourceTree = "<group>"; };
+		990C80552EC2597C0077E6E7 /* README 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README 2.md"; sourceTree = "<group>"; };
 		991ECE002EAB072C00BB7684 /* privacy-policy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "privacy-policy.html"; sourceTree = "<group>"; };
 		99A127FB2EA86F1700623BA5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		99A127FC2EA86F1700623BA5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -112,6 +120,9 @@
 				99C070362EAAE23A00FFFC7C /* icon256x256.png */,
 				99C070372EAAE23A00FFFC7C /* icon512x512.png */,
 				99C070382EAAE23A00FFFC7C /* icon1024x1024.png */,
+				990C804B2EC256670077E6E7 /* Perference.png */,
+				990C804C2EC256670077E6E7 /* Pixel Color Pick.png */,
+				990C804D2EC256670077E6E7 /* PixelColorPicker.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -131,6 +142,7 @@
 				99A1280D2EA8759300623BA5 /* Screenshot.png */,
 				99C070392EAAE23A00FFFC7C /* Resources */,
 				99C070542EAAE69000FFFC7C /* PixelPick.entitlements */,
+				990C80552EC2597C0077E6E7 /* README 2.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -266,9 +278,13 @@
 			files = (
 				99A1280C2EA871F900623BA5 /* PRIVACY_POLICY.md in Resources */,
 				99C0703A2EAAE23A00FFFC7C /* icon256x256.png in Resources */,
+				990C80562EC2597C0077E6E7 /* README 2.md in Resources */,
 				99C0703B2EAAE23A00FFFC7C /* icon16x16.png in Resources */,
 				99C0703C2EAAE23A00FFFC7C /* icon64x64.png in Resources */,
 				99C0703D2EAAE23A00FFFC7C /* icon128x128.png in Resources */,
+				990C804E2EC256670077E6E7 /* Perference.png in Resources */,
+				990C804F2EC256670077E6E7 /* Pixel Color Pick.png in Resources */,
+				990C80502EC256670077E6E7 /* PixelColorPicker.png in Resources */,
 				99C09DA82EADAF8F00FCDE3A /* info.plist in Resources */,
 				99C0703E2EAAE23A00FFFC7C /* icon32x32.png in Resources */,
 				99C0703F2EAAE23A00FFFC7C /* icon512x512.png in Resources */,
