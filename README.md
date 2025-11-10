@@ -54,19 +54,19 @@ Perfect for designers, developers, artists, and anyone who takes color seriously
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="resources/PixelColorPicker.png" alt="Pixel Color Picker Main Interface" width="600"/>
+  <img src="Resources/PixelColorPicker.png" alt="Pixel Color Picker Main Interface" width="600"/>
   <br/>
   <em>Main Interface - Interactive color wheel and instant format conversion</em>
 </p>
 
 <p align="center">
-  <img src="resources/Preference.png" alt="Preferences Window" width="600"/>
+  <img src="Resources/Preference.png" alt="Preferences Window" width="600"/>
   <br/>
   <em>Preferences - Customize your color picking experience</em>
 </p>
 
 <p align="center">
-  <img src="resources/Pixel Color Pick.png" alt="Available on the Mac App Store" width="600"/>
+  <img src="Resources/Pixel Color Pick.png" alt="Available on the Mac App Store" width="600"/>
   <br/>
   <em>Available on the Mac App Store</em>
 </p>
