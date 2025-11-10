@@ -539,12 +539,12 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // MARK: - Header Section
             headerSection
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
                 .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
             
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 16) {
                     // MARK: - Color Selection Section
                     GroupBox {
                         colorSelectionSection
@@ -552,8 +552,8 @@ struct ContentView: View {
                         Label("Color Selection", systemImage: "paintpalette")
                             .font(.headline)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 20)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
                     
                     // MARK: - Color Values Section
                     GroupBox {
@@ -562,7 +562,7 @@ struct ContentView: View {
                         Label("Color Values", systemImage: "number")
                             .font(.headline)
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 20)
                     
                     // MARK: - History Section
                     if !colorPicker.colorHistory.isEmpty {
@@ -572,14 +572,15 @@ struct ContentView: View {
                             Label("Recent Colors", systemImage: "clock")
                                 .font(.headline)
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 20)
                     }
                     
-                    Spacer(minLength: 20)
+                    Spacer(minLength: 12)
                 }
             }
         }
-        .frame(minWidth: 550, minHeight: 650)
+        .frame(width: 520, height: 600)
+        .navigationTitle("Color Picker")
         .task {
             guard preferences.showColorSamplerOnOpen else { return }
             try? await Task.sleep(nanoseconds: 500_000_000)
@@ -632,21 +633,21 @@ struct ContentView: View {
     
     // MARK: - Color Selection Section View
     private var colorSelectionSection: some View {
-        HStack(alignment: .top, spacing: 24) {
+        HStack(alignment: .top, spacing: 16) {
             // Current color preview
-            VStack(spacing: 12) {
-                RoundedRectangle(cornerRadius: 16)
+            VStack(spacing: 8) {
+                RoundedRectangle(cornerRadius: 12)
                     .fill(Color(selectedColor))
-                    .frame(width: 140, height: 140)
+                    .frame(width: 120, height: 120)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.primary.opacity(0.15), lineWidth: 1)
                     )
-                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 3)
                 
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("Current Color")
-                        .font(.caption)
+                        .font(.caption2)
                         .fontWeight(.medium)
                         .foregroundColor(.secondary)
                     
@@ -660,9 +661,9 @@ struct ContentView: View {
             Divider()
             
             // Color wheel selector
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 ColorWheelView(selectedColor: $selectedColor)
-                    .frame(width: 280, height: 280)
+                    .frame(width: 240, height: 240)
                 
                 Text("Click or drag to select a color")
                     .font(.caption2)
@@ -670,12 +671,12 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, 16)
+        .padding(.vertical, 12)
     }
     
     // MARK: - Color Values Section View
     private var colorValuesSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             ColorFormatRow(
                 label: "HEX",
                 icon: "number",
@@ -698,21 +699,21 @@ struct ContentView: View {
                 value: ColorUtils.hslFromColor(selectedColor, preferences: preferences)
             )
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
     }
     
     // MARK: - Color History Section View
     private var colorHistorySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Click any color to select it")
-                .font(.caption)
+                .font(.caption2)
                 .foregroundColor(.secondary)
             
             let selectedHex = ColorUtils.hexFromColor(selectedColor, preferences: preferences)
             
             LazyVGrid(columns: [
-                GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 12)
-            ], spacing: 12) {
+                GridItem(.adaptive(minimum: 55, maximum: 70), spacing: 10)
+            ], spacing: 10) {
                 ForEach(Array(colorPicker.colorHistory.enumerated()), id: \.offset) { _, historyColor in
                     let historyHex = ColorUtils.hexFromColor(historyColor, preferences: preferences)
                     let isSelected = selectedHex == historyHex
@@ -720,19 +721,19 @@ struct ContentView: View {
                     Button(action: {
                         selectedColor = historyColor
                     }) {
-                        VStack(spacing: 6) {
-                            RoundedRectangle(cornerRadius: 10)
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 8)
                                 .fill(Color(historyColor))
-                                .frame(height: 60)
+                                .frame(height: 50)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 8)
                                         .stroke(isSelected ? Color.accentColor : Color.primary.opacity(0.15),
-                                               lineWidth: isSelected ? 3 : 1)
+                                               lineWidth: isSelected ? 2.5 : 1)
                                 )
-                                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 2)
+                                .shadow(color: Color.black.opacity(0.08), radius: 2, x: 0, y: 1)
                             
                             Text(historyHex)
-                                .font(.system(.caption2, design: .monospaced))
+                                .font(.system(size: 9, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
@@ -742,7 +743,7 @@ struct ContentView: View {
                 }
             }
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 8)
     }
 }
 
@@ -754,30 +755,31 @@ struct ColorFormatRow: View {
     @State private var copied = false
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 12) {
             // Format label with icon
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
                     .foregroundColor(.accentColor)
-                    .frame(width: 20)
+                    .frame(width: 18)
+                    .font(.system(size: 14))
                 
                 Text(label)
-                    .font(.system(.body, design: .rounded))
+                    .font(.system(.callout, design: .rounded))
                     .fontWeight(.semibold)
-                    .frame(width: 45, alignment: .leading)
+                    .frame(width: 40, alignment: .leading)
             }
-            .frame(width: 90, alignment: .leading)
+            .frame(width: 75, alignment: .leading)
             
             // Value display
             Text(value)
-                .font(.system(.body, design: .monospaced))
+                .font(.system(.callout, design: .monospaced))
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 12)
                 .background(Color(NSColor.textBackgroundColor))
-                .cornerRadius(8)
+                .cornerRadius(6)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 6)
                         .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                 )
             
@@ -794,24 +796,25 @@ struct ColorFormatRow: View {
                     copied = false
                 }
             }) {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.doc.fill")
+                        .font(.system(size: 12))
                     Text(copied ? "Copied" : "Copy")
-                        .font(.caption)
+                        .font(.caption2)
                         .fontWeight(.medium)
                 }
                 .foregroundColor(copied ? .green : .accentColor)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
                 .background(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: 5)
                         .fill(copied ? Color.green.opacity(0.1) : Color.accentColor.opacity(0.1))
                 )
             }
             .buttonStyle(.plain)
             .help("Copy \(label) value to clipboard")
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 2)
     }
 }
 
