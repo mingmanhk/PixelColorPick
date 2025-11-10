@@ -6,10 +6,7 @@
 //
 
 import SwiftUI
-import Foundation
 import AppKit
-import Combine
-import ServiceManagement
 
 @main
 struct PixelColorPickApp: App {
@@ -20,15 +17,13 @@ struct PixelColorPickApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(preferences)
-                .onAppear {
-                    setupWindow()
-                }
+                .onAppear(perform: setupWindow)
                 .onChange(of: preferences.stayOnTop) { _, newValue in
                     updateWindowLevel(stayOnTop: newValue)
                 }
         }
         .windowToolbarStyle(.unified)
-        .defaultSize(width: 420, height: 480)
+        .defaultSize(width: 550, height: 650)
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .appSettings) {
@@ -41,22 +36,17 @@ struct PixelColorPickApp: App {
     }
     
     private func setupWindow() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if let window = NSApp.windows.first {
-                // Apply stay on top preference
-                updateWindowLevel(stayOnTop: preferences.stayOnTop)
-                
-                // Set window properties
-                window.isRestorable = false
-                window.titlebarAppearsTransparent = false
-            }
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 100_000_000)
+            guard let window = NSApp.windows.first else { return }
+            updateWindowLevel(stayOnTop: preferences.stayOnTop)
+            window.isRestorable = false
+            window.titlebarAppearsTransparent = false
         }
     }
     
     private func updateWindowLevel(stayOnTop: Bool) {
-        if let window = NSApp.windows.first {
-            window.level = stayOnTop ? .floating : .normal
-        }
+        NSApp.windows.first?.level = stayOnTop ? .floating : .normal
     }
     
     private func showPreferences() {

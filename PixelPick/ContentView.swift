@@ -1,11 +1,12 @@
 import SwiftUI
-import Foundation
 import AppKit
-import Combine
 import ServiceManagement
+import Combine
+import Foundation
 
 // MARK: - Preferences
-class Preferences: ObservableObject {
+@MainActor
+final class Preferences: ObservableObject {
     @Published var showInMenuBar: Bool {
         didSet { UserDefaults.standard.set(showInMenuBar, forKey: "showInMenuBar") }
     }
@@ -59,7 +60,6 @@ class Preferences: ObservableObject {
         self.enableDarkMode = UserDefaults.standard.bool(forKey: "enableDarkMode")
         self.dynamicColorAdaptation = UserDefaults.standard.bool(forKey: "dynamicColorAdaptation")
         
-        // Apply appearance on init
         applyAppearance()
         setupThemeObserver()
     }
@@ -71,33 +71,27 @@ class Preferences: ObservableObject {
     }
     
     private func setupThemeObserver() {
-        // Remove existing observer
         if let observer = systemThemeObserver {
             DistributedNotificationCenter.default().removeObserver(observer)
         }
         
-        // Only set up observer if dynamic adaptation is enabled
-        if dynamicColorAdaptation {
-            systemThemeObserver = DistributedNotificationCenter.default().addObserver(
-                forName: Notification.Name("AppleInterfaceThemeChangedNotification"),
-                object: nil,
-                queue: .main
-            ) { _ in
-                self.applyAppearance()
+        guard dynamicColorAdaptation else { return }
+        
+        systemThemeObserver = DistributedNotificationCenter.default().addObserver(
+            forName: Notification.Name("AppleInterfaceThemeChangedNotification"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor [weak self] in
+                self?.applyAppearance()
             }
         }
     }
     
     private func applyAppearance() {
-        DispatchQueue.main.async {
-            if self.dynamicColorAdaptation {
-                // Follow system theme
-                NSApp.appearance = nil
-            } else {
-                // Use manual setting
-                NSApp.appearance = self.enableDarkMode ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua)
-            }
-        }
+        NSApp.appearance = dynamicColorAdaptation ? nil : 
+            (enableDarkMode ? NSAppearance(named: .darkAqua) : NSAppearance(named: .aqua))
     }
     
     private func setLaunchAtLogin(enabled: Bool) {
@@ -118,50 +112,223 @@ struct PreferencesView: View {
     @ObservedObject var preferences: Preferences
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Preferences")
-                .font(.title2)
-                .fontWeight(.bold)
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 4) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(.linearGradient(
+                        colors: [.accentColor, .accentColor.opacity(0.7)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                
+                Text("Preferences")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("Customize your color picker experience")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.top, 16)
+            .padding(.bottom, 16)
             
-            VStack(alignment: .leading, spacing: 12) {
-                Toggle("Show in menu bar", isOn: $preferences.showInMenuBar)
-                    .help("Display the app icon in the menu bar for quick access")
+            ScrollView {
+                VStack(spacing: 12) {
+                    // General Settings
+                    PreferenceGroup(
+                        title: "General",
+                        icon: "square.grid.2x2",
+                        iconColor: .blue
+                    ) {
+                        PreferenceToggleRow(
+                            title: "Show in Menu Bar",
+                            description: "Quick access from the menu bar",
+                            icon: "menubar.rectangle",
+                            isOn: $preferences.showInMenuBar
+                        )
+                        
+                        Divider()
+                            .padding(.leading, 36)
+                        
+                        PreferenceToggleRow(
+                            title: "Launch at Login",
+                            description: "Automatically start when you log in",
+                            icon: "power",
+                            isOn: $preferences.launchAtLogin
+                        )
+                        
+                        Divider()
+                            .padding(.leading, 36)
+                        
+                        PreferenceToggleRow(
+                            title: "Stay on Top",
+                            description: "Keep window above other windows",
+                            icon: "pin.fill",
+                            isOn: $preferences.stayOnTop
+                        )
+                    }
+                    
+                    // Behavior Settings
+                    PreferenceGroup(
+                        title: "Behavior",
+                        icon: "hand.tap",
+                        iconColor: .purple
+                    ) {
+                        PreferenceToggleRow(
+                            title: "Auto-Open Color Sampler",
+                            description: "Show color picker when app opens",
+                            icon: "eyedropper",
+                            isOn: $preferences.showColorSamplerOnOpen
+                        )
+                    }
+                    
+                    // Color Format Settings
+                    PreferenceGroup(
+                        title: "Color Format",
+                        icon: "textformat",
+                        iconColor: .orange
+                    ) {
+                        PreferenceToggleRow(
+                            title: "Uppercase Hex",
+                            description: "Display hex as #FF0000 instead of #ff0000",
+                            icon: "textformat.size.larger",
+                            isOn: $preferences.uppercaseHex
+                        )
+                        
+                        Divider()
+                            .padding(.leading, 36)
+                        
+                        PreferenceToggleRow(
+                            title: "Legacy Syntax",
+                            description: "Use older format for HSL and RGB",
+                            icon: "clock.arrow.circlepath",
+                            isOn: $preferences.useLegacySyntax
+                        )
+                    }
+                    
+                    // Appearance Settings
+                    PreferenceGroup(
+                        title: "Appearance",
+                        icon: "paintbrush.fill",
+                        iconColor: .pink
+                    ) {
+                        PreferenceToggleRow(
+                            title: "Dynamic Theme",
+                            description: "Follow macOS system appearance",
+                            icon: "circle.lefthalf.filled",
+                            isOn: $preferences.dynamicColorAdaptation
+                        )
+                        
+                        if !preferences.dynamicColorAdaptation {
+                            Divider()
+                                .padding(.leading, 36)
+                            
+                            PreferenceToggleRow(
+                                title: "Dark Mode",
+                                description: "Use dark appearance",
+                                icon: "moon.fill",
+                                isOn: $preferences.enableDarkMode
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+        }
+        .frame(width: 480, height: 540)
+        .background(Color(NSColor.windowBackgroundColor))
+    }
+}
+
+// MARK: - Preference Group
+struct PreferenceGroup<Content: View>: View {
+    let title: String
+    let icon: String
+    let iconColor: Color
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 20, height: 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(iconColor.gradient)
+                    )
                 
-                Toggle("Launch at login", isOn: $preferences.launchAtLogin)
-                    .help("Automatically start the app when you log in")
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 10)
+            
+            VStack(spacing: 0) {
+                content
+            }
+            .padding(.horizontal, 12)
+            .padding(.bottom, 10)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(NSColor.controlBackgroundColor))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Preference Toggle Row
+struct PreferenceToggleRow: View {
+    let title: String
+    let description: String
+    let icon: String
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+                .foregroundColor(.secondary)
+                .frame(width: 20)
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.callout)
+                    .fontWeight(.medium)
                 
-                Toggle("Stay on top", isOn: $preferences.stayOnTop)
-                    .help("Keep the color picker window above other windows")
-                
-                Toggle("Show color sampler when opening window", isOn: $preferences.showColorSamplerOnOpen)
-                    .help("Automatically activate the color picker when the app opens")
-                
-                Toggle("Uppercase Hex color", isOn: $preferences.uppercaseHex)
-                    .help("Display hex colors in uppercase (e.g., #FF0000 instead of #ff0000)")
-                
-                Toggle("Use legacy syntax for HSL and RGB", isOn: $preferences.useLegacySyntax)
-                    .help("Use older color syntax format")
-                
-                Toggle("Enable dark mode", isOn: $preferences.enableDarkMode)
-                    .help("Switch the app to dark appearance")
-                    .disabled(preferences.dynamicColorAdaptation)
-                
-                Toggle("Dynamic colors adapt to the macOS theme", isOn: $preferences.dynamicColorAdaptation)
-                    .help("Automatically follow the macOS system appearance (light/dark mode)")
+                Text(description)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
+            
+            Toggle("", isOn: $isOn)
+                .toggleStyle(.switch)
+                .labelsHidden()
+                .controlSize(.small)
         }
-        .padding(20)
-        .frame(width: 400, height: 300)
+        .padding(.vertical, 6)
     }
 }
 
 // MARK: - Color Utilities
 struct ColorUtils {
     static func hexFromColor(_ color: NSColor, preferences: Preferences) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
+        guard let srgb = color.usingColorSpace(.sRGB),
+              let components = srgb.cgColor.components,
+              components.count >= 3 else {
+            return "#000000"
+        }
         let r = Int(components[0] * 255)
         let g = Int(components[1] * 255)
         let b = Int(components[2] * 255)
@@ -170,118 +337,99 @@ struct ColorUtils {
     }
     
     static func rgbFromColor(_ color: NSColor, preferences: Preferences) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
+        guard let srgb = color.usingColorSpace(.sRGB),
+              let components = srgb.cgColor.components,
+              components.count >= 3 else {
+            return preferences.useLegacySyntax ? "0, 0, 0" : "rgb(0, 0, 0)"
+        }
         let r = Int(components[0] * 255)
         let g = Int(components[1] * 255)
         let b = Int(components[2] * 255)
         
-        if preferences.useLegacySyntax {
-            return "\(r), \(g), \(b)"
-        } else {
-            return "rgb(\(r), \(g), \(b))"
-        }
+        return preferences.useLegacySyntax ? "\(r), \(g), \(b)" : "rgb(\(r), \(g), \(b))"
     }
     
     static func hslFromColor(_ color: NSColor, preferences: Preferences) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
+        guard let srgb = color.usingColorSpace(.sRGB),
+              let components = srgb.cgColor.components,
+              components.count >= 3 else {
+            return preferences.useLegacySyntax ? "0°, 0%, 0%" : "hsl(0, 0%, 0%)"
+        }
         let (h, s, l) = rgbToHsl(r: components[0], g: components[1], b: components[2])
         
-        if preferences.useLegacySyntax {
-            return "\(Int(h))°, \(Int(s * 100))%, \(Int(l * 100))%"
-        } else {
-            return "hsl(\(Int(h)), \(Int(s * 100))%, \(Int(l * 100))%)"
-        }
+        return preferences.useLegacySyntax ? 
+            "\(Int(h))°, \(Int(s * 100))%, \(Int(l * 100))%" : 
+            "hsl(\(Int(h)), \(Int(s * 100))%, \(Int(l * 100))%)"
     }
     
-    // Legacy methods for backward compatibility
-    static func hexFromColor(_ color: NSColor) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
-        let r = Int(components[0] * 255)
-        let g = Int(components[1] * 255)
-        let b = Int(components[2] * 255)
-        return String(format: "#%02X%02X%02X", r, g, b)
-    }
-    
-    static func rgbFromColor(_ color: NSColor) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
-        let r = Int(components[0] * 255)
-        let g = Int(components[1] * 255)
-        let b = Int(components[2] * 255)
-        return "rgb(\(r), \(g), \(b))"
-    }
-    
-    static func hslFromColor(_ color: NSColor) -> String {
-        let srgb = color.usingColorSpace(.sRGB) ?? color
-        let components = srgb.cgColor.components ?? [0, 0, 0, 1]
-        let (h, s, l) = rgbToHsl(r: components[0], g: components[1], b: components[2])
-        return "hsl(\(Int(h)), \(Int(s * 100))%, \(Int(l * 100))%)"
-    }
-    
-    static func rgbToHsl(r: CGFloat, g: CGFloat, b: CGFloat) -> (CGFloat, CGFloat, CGFloat) {
-        let max = max(r, g, b)
-        let min = min(r, g, b)
-        let l = (max + min) / 2
+    private static func rgbToHsl(r: CGFloat, g: CGFloat, b: CGFloat) -> (CGFloat, CGFloat, CGFloat) {
+        let maxVal = max(r, g, b)
+        let minVal = min(r, g, b)
+        let l = (maxVal + minVal) / 2
         
-        if max == min {
-            return (0, 0, l)
-        }
+        guard maxVal != minVal else { return (0, 0, l) }
         
-        let s = l > 0.5 ? (max - min) / (2 - max - min) : (max - min) / (max + min)
+        let delta = maxVal - minVal
+        let s = l > 0.5 ? delta / (2 - maxVal - minVal) : delta / (maxVal + minVal)
         
         var h: CGFloat = 0
-        switch max {
+        switch maxVal {
         case r:
-            h = (g - b) / (max - min) + (g < b ? 6 : 0)
+            h = (g - b) / delta + (g < b ? 6 : 0)
         case g:
-            h = (b - r) / (max - min) + 2
+            h = (b - r) / delta + 2
         case b:
-            h = (r - g) / (max - min) + 4
+            h = (r - g) / delta + 4
         default:
             break
         }
-        h = h / 6
+        h /= 6
         
         return (h * 360, s, l)
     }
 }
 
 // MARK: - Screen Color Picker
-class ScreenColorPicker: ObservableObject {
-    @Published var colorHistory: [NSColor] = []
+@MainActor
+final class ScreenColorPicker: ObservableObject {
+    @Published private(set) var colorHistory: [NSColor] = []
     private let maxHistoryCount = 10
+    private let colorSampler = NSColorSampler()
     
-    init() {
-        // Initialize with default pure white colors
-        colorHistory = Array(repeating: NSColor.white, count: maxHistoryCount)
-    }
-    
-    @MainActor
     func pickColorFromScreen() async -> NSColor? {
-        let colorSampler = NSColorSampler()
-        if let color = await colorSampler.sample() {
-            addToHistory(color)
-            return color
-        }
-        return nil
+        guard let color = await colorSampler.sample() else { return nil }
+        addToHistory(color)
+        return color
     }
     
     private func addToHistory(_ color: NSColor) {
-        // Remove if color already exists in history
-        colorHistory.removeAll { existingColor in
-            ColorUtils.hexFromColor(existingColor) == ColorUtils.hexFromColor(color)
-        }
+        let newColorHex = color.hexString
         
-        // Add to beginning of history
+        // Remove duplicate if exists
+        colorHistory.removeAll { $0.hexString == newColorHex }
+        
+        // Add to beginning
         colorHistory.insert(color, at: 0)
         
-        // Keep only last 10 colors
+        // Trim to max count
         if colorHistory.count > maxHistoryCount {
             colorHistory.removeLast()
         }
+    }
+}
+
+// MARK: - NSColor Extension for Performance
+private extension NSColor {
+    var hexString: String {
+        guard let srgb = usingColorSpace(.sRGB),
+              let components = srgb.cgColor.components,
+              components.count >= 3 else {
+            return "#000000"
+        }
+        let r = Int(components[0] * 255)
+        let g = Int(components[1] * 255)
+        let b = Int(components[2] * 255)
+        return String(format: "#%02X%02X%02X", r, g, b)
     }
 }
 
@@ -303,35 +451,24 @@ struct ColorWheelView: View {
             let center = CGPoint(x: size.width / 2, y: size.height / 2)
             let radius = min(size.width, size.height) / 2 - 15
             
-            // Draw smooth color wheel using gradients
-            for angle in stride(from: 0, through: 360, by: 0.5) {
+            // Draw color wheel with optimized rendering
+            for angle in stride(from: 0, through: 360, by: 2) {
                 let startRad = CGFloat(angle) * .pi / 180
-                let endRad = CGFloat(angle + 0.5) * .pi / 180
+                let endRad = CGFloat(angle + 2) * .pi / 180
+                let hue = CGFloat(angle) / 360
                 
-                // Create radial gradient from center to edge
-                for radialStep in stride(from: 0, through: 1, by: 0.02) {
-                    let nextRadialStep = min(radialStep + 0.02, 1)
-                    
-                    let hue = CGFloat(angle) / 360
-                    
-                    // Inner circle
+                for radialStep in stride(from: 0, through: 1, by: 0.1) {
+                    let nextRadialStep = min(radialStep + 0.1, 1)
                     let innerRadius = radius * radialStep
-                    let innerX1 = center.x + Foundation.cos(startRad) * innerRadius
-                    let innerY1 = center.y + Foundation.sin(startRad) * innerRadius
-                    let innerX2 = center.x + Foundation.cos(endRad) * innerRadius
-                    let innerY2 = center.y + Foundation.sin(endRad) * innerRadius
-                    
-                    // Outer circle
                     let outerRadius = radius * nextRadialStep
-                    let outerX1 = center.x + Foundation.cos(startRad) * outerRadius
-                    let outerY1 = center.y + Foundation.sin(startRad) * outerRadius
                     
                     var path = Path()
-                    path.move(to: CGPoint(x: innerX1, y: innerY1))
-                    path.addLine(to: CGPoint(x: outerX1, y: outerY1))
-                    path.addArc(center: center, radius: outerRadius, startAngle: Angle(radians: startRad), endAngle: Angle(radians: endRad), clockwise: false)
-                    path.addLine(to: CGPoint(x: innerX2, y: innerY2))
-                    path.addArc(center: center, radius: innerRadius, startAngle: Angle(radians: endRad), endAngle: Angle(radians: startRad), clockwise: true)
+                    path.addArc(center: center, radius: innerRadius, startAngle: Angle(radians: startRad), endAngle: Angle(radians: endRad), clockwise: false)
+                    path.addLine(to: CGPoint(
+                        x: center.x + CGFloat(cos(endRad)) * outerRadius,
+                        y: center.y + CGFloat(sin(endRad)) * outerRadius
+                    ))
+                    path.addArc(center: center, radius: outerRadius, startAngle: Angle(radians: endRad), endAngle: Angle(radians: startRad), clockwise: true)
                     path.closeSubpath()
                     
                     let color = NSColor(hue: hue, saturation: radialStep, brightness: 1, alpha: 1)
@@ -340,47 +477,34 @@ struct ColorWheelView: View {
             }
             
             // Draw selector indicator
-            var colorComponents = selectedColor.cgColor.components ?? [0, 0, 0, 1]
-            if colorComponents.count < 3 {
-                colorComponents = [0, 0, 0, 1]
-            }
-            
-            let srgb = selectedColor.usingColorSpace(.sRGB) ?? selectedColor
+            guard let srgb = selectedColor.usingColorSpace(.sRGB) else { return }
             var hue: CGFloat = 0, saturation: CGFloat = 0, brightness: CGFloat = 0, alpha: CGFloat = 0
             srgb.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
             
-            let selectorAngle = hue * 360
-            let selectorRad = CGFloat(selectorAngle) * .pi / 180
+            let selectorRad = hue * 2 * .pi
             let selectorDistance = saturation * radius
-            let selectorX = center.x + cos(Double(selectorRad)) * Double(selectorDistance)
-            let selectorY = center.y + sin(Double(selectorRad)) * Double(selectorDistance)
+            let selectorX = center.x + CGFloat(cos(selectorRad)) * selectorDistance
+            let selectorY = center.y + CGFloat(sin(selectorRad)) * selectorDistance
             
             // Draw selector circle
-            var selectorPath = Path()
-            selectorPath.addEllipse(in: CGRect(x: selectorX - 8, y: selectorY - 8, width: 16, height: 16))
+            let selectorPath = Circle()
+                .path(in: CGRect(x: selectorX - 8, y: selectorY - 8, width: 16, height: 16))
             context.stroke(selectorPath, with: .color(.white), lineWidth: 3)
-            
-            var innerSelectorPath = Path()
-            innerSelectorPath.addEllipse(in: CGRect(x: selectorX - 6, y: selectorY - 6, width: 12, height: 12))
-            context.stroke(innerSelectorPath, with: .color(.black), lineWidth: 1)
+            context.stroke(Circle().path(in: CGRect(x: selectorX - 6, y: selectorY - 6, width: 12, height: 12)), 
+                         with: .color(.black), lineWidth: 1)
         }
-        .frame(height: 280) // Reduced from 350 to match ContentView constraint
+        .frame(height: 280)
         .background(Color(.controlBackgroundColor))
         .cornerRadius(12)
         .background(
             GeometryReader { geometry in
-                Color.clear
-                    .preference(key: SizePreferenceKey.self, value: geometry.size)
+                Color.clear.preference(key: SizePreferenceKey.self, value: geometry.size)
             }
         )
-        .onPreferenceChange(SizePreferenceKey.self) { size in
-            wheelSize = size
-        }
+        .onPreferenceChange(SizePreferenceKey.self) { wheelSize = $0 }
         .gesture(
             DragGesture(minimumDistance: 0)
-                .onChanged { value in
-                    updateColor(from: value.location)
-                }
+                .onChanged { updateColor(from: $0.location) }
         )
     }
     
@@ -388,7 +512,6 @@ struct ColorWheelView: View {
         let center = CGPoint(x: wheelSize.width / 2, y: wheelSize.height / 2)
         let dx = point.x - center.x
         let dy = point.y - center.y
-        
         let distance = sqrt(dx * dx + dy * dy)
         let radius = min(wheelSize.width, wheelSize.height) / 2 - 15
         
@@ -397,239 +520,302 @@ struct ColorWheelView: View {
         var angle = atan2(dy, dx) * 180 / .pi
         if angle < 0 { angle += 360 }
         
-        let hue = angle / 360
-        let saturation = min(distance / radius, 1)
-        let brightness = CGFloat(1)
-        
-        selectedColor = NSColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1)
+        selectedColor = NSColor(
+            hue: angle / 360,
+            saturation: min(distance / radius, 1),
+            brightness: 1,
+            alpha: 1
+        )
     }
 }
 
-// MARK: - Main App
-struct ColorPickerApp: App {
-    @StateObject private var preferences = Preferences()
-    @State private var preferencesWindow: NSWindow?
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(preferences)
-                .onAppear {
-                    setupWindow()
-                }
-                .onChange(of: preferences.stayOnTop) { _, newValue in
-                    updateWindowLevel(stayOnTop: newValue)
-                }
-        }
-        .windowToolbarStyle(.unified)
-        .commands {
-            CommandGroup(replacing: .appSettings) {
-                Button("Preferences...") {
-                    showPreferences()
-                }
-                .keyboardShortcut(",", modifiers: .command)
-            }
-        }
-    }
-    
-    private func setupWindow() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if let window = NSApp.windows.first {
-                // Apply stay on top preference
-                updateWindowLevel(stayOnTop: preferences.stayOnTop)
-                
-                // Set window properties
-                window.isRestorable = false
-                window.titlebarAppearsTransparent = false
-            }
-        }
-    }
-    
-    private func updateWindowLevel(stayOnTop: Bool) {
-        if let window = NSApp.windows.first {
-            window.level = stayOnTop ? .floating : .normal
-        }
-    }
-    
-    private func showPreferences() {
-        if preferencesWindow == nil {
-            let preferencesView = PreferencesView(preferences: preferences)
-            let hostingController = NSHostingController(rootView: preferencesView)
-            
-            preferencesWindow = NSWindow(contentViewController: hostingController)
-            preferencesWindow?.title = "Preferences"
-            preferencesWindow?.styleMask = [.titled, .closable]
-            preferencesWindow?.isRestorable = false
-            preferencesWindow?.center()
-        }
-        
-        preferencesWindow?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-    }
-}
 
 struct ContentView: View {
     @State private var selectedColor = NSColor(hue: 0, saturation: 1, brightness: 1, alpha: 1)
-    @State private var copiedFormat: String?
     @StateObject private var colorPicker = ScreenColorPicker()
     @EnvironmentObject private var preferences: Preferences
     
     var body: some View {
-        VStack(spacing: 16) {
-            Text("System Color Picker")
-                .font(.title2)
-                .padding(.top, 16)
+        VStack(spacing: 0) {
+            // MARK: - Header Section
+            headerSection
+                .padding(.horizontal, 24)
+                .padding(.vertical, 20)
+                .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
             
-            ColorWheelView(selectedColor: $selectedColor)
-                .frame(height: 280) // Reduced from 350
-            
-            // Color format buttons - more compact
-            VStack(spacing: 8) {
-                HStack(spacing: 8) {
-                    VStack(spacing: 6) {
-                        CopyButton(
-                            label: "Hex", 
-                            color: selectedColor, 
-                            format: { ColorUtils.hexFromColor($0, preferences: preferences) }
-                        )
-                        TextField("", text: .constant(ColorUtils.hexFromColor(selectedColor, preferences: preferences)))
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(.caption, design: .monospaced))
-                            .multilineTextAlignment(.center)
+            ScrollView {
+                VStack(spacing: 24) {
+                    // MARK: - Color Selection Section
+                    GroupBox {
+                        colorSelectionSection
+                    } label: {
+                        Label("Color Selection", systemImage: "paintpalette")
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 20)
+                    
+                    // MARK: - Color Values Section
+                    GroupBox {
+                        colorValuesSection
+                    } label: {
+                        Label("Color Values", systemImage: "number")
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 24)
+                    
+                    // MARK: - History Section
+                    if !colorPicker.colorHistory.isEmpty {
+                        GroupBox {
+                            colorHistorySection
+                        } label: {
+                            Label("Recent Colors", systemImage: "clock")
+                                .font(.headline)
+                        }
+                        .padding(.horizontal, 24)
                     }
                     
-                    VStack(spacing: 6) {
-                        CopyButton(
-                            label: "RGB", 
-                            color: selectedColor, 
-                            format: { ColorUtils.rgbFromColor($0, preferences: preferences) }
-                        )
-                        TextField("", text: .constant(ColorUtils.rgbFromColor(selectedColor, preferences: preferences)))
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(.caption, design: .monospaced))
-                            .multilineTextAlignment(.center)
-                    }
-                    
-                    VStack(spacing: 6) {
-                        CopyButton(
-                            label: "HSL", 
-                            color: selectedColor, 
-                            format: { ColorUtils.hslFromColor($0, preferences: preferences) }
-                        )
-                        TextField("", text: .constant(ColorUtils.hslFromColor(selectedColor, preferences: preferences)))
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(.caption, design: .monospaced))
-                            .multilineTextAlignment(.center)
-                    }
+                    Spacer(minLength: 20)
                 }
             }
-            
-            // Bottom section: Eyedropper, Selected Color, and History
-            HStack(spacing: 12) {
-                // Eyedropper button - more compact
-                Button(action: {
-                    Task {
-                        if let pickedColor = await colorPicker.pickColorFromScreen() {
-                            selectedColor = pickedColor
-                        }
-                    }
-                }) {
-                    VStack(spacing: 2) {
-                        Image(systemName: "eyedropper")
-                            .font(.title3)
-                        Text("Pick Color")
-                            .font(.caption2)
-                    }
-                    .foregroundColor(.primary)
-                }
-                .buttonStyle(.plain)
-                .help("Pick color from screen")
-                
-                // Selected color preview (moved here between pick color and recent colors)
-                VStack(spacing: 4) {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color(selectedColor))
-                        .frame(width: 50, height: 50)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.primary.opacity(0.2), lineWidth: 1)
-                        )
-                    
-                    Text("Selected")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-                
-                // Color history - more compact
-                if !colorPicker.colorHistory.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Recent Colors")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        
-                        HStack(spacing: 6) {
-                            ForEach(Array(colorPicker.colorHistory.enumerated()), id: \.offset) { index, historyColor in
-                                Button(action: {
-                                    selectedColor = historyColor
-                                }) {
-                                    RoundedRectangle(cornerRadius: 3)
-                                        .fill(Color(historyColor))
-                                        .frame(width: 24, height: 24) // Reduced from 30x30
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .stroke(Color.primary.opacity(0.2), lineWidth: 0.5)
-                                        )
-                                }
-                                .buttonStyle(.plain)
-                                .help(ColorUtils.hexFromColor(historyColor, preferences: preferences))
-                            }
-                        }
-                    }
-                }
-                
-                Spacer()
-            }
-            
-            Spacer(minLength: 8)
         }
-        .padding(.horizontal, 20) // Reduced from 30
-        .padding(.vertical, 12)   // Reduced from 30
-        .frame(minWidth: 420, minHeight: 480) // Reduced from 500x600
-
+        .frame(minWidth: 550, minHeight: 650)
         .task {
-            if preferences.showColorSamplerOnOpen {
-                try? await Task.sleep(nanoseconds: 500_000_000)
-                if let pickedColor = await colorPicker.pickColorFromScreen() {
-                    selectedColor = pickedColor
-                }
+            guard preferences.showColorSamplerOnOpen else { return }
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            if let pickedColor = await colorPicker.pickColorFromScreen() {
+                selectedColor = pickedColor
             }
         }
     }
+    
+    // MARK: - Header Section View
+    private var headerSection: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Color Picker")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Text("Select and copy colors in multiple formats")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                Task {
+                    if let pickedColor = await colorPicker.pickColorFromScreen() {
+                        selectedColor = pickedColor
+                    }
+                }
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: "eyedropper.halffull")
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("⌘P")
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .help("Pick a color from anywhere on your screen")
+            .keyboardShortcut("p", modifiers: .command)
+        }
+    }
+    
+    // MARK: - Color Selection Section View
+    private var colorSelectionSection: some View {
+        HStack(alignment: .top, spacing: 24) {
+            // Current color preview
+            VStack(spacing: 12) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(selectedColor))
+                    .frame(width: 140, height: 140)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.primary.opacity(0.15), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                
+                VStack(spacing: 4) {
+                    Text("Current Color")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                    
+                    Text(ColorUtils.hexFromColor(selectedColor, preferences: preferences))
+                        .font(.system(.caption2, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            
+            Divider()
+            
+            // Color wheel selector
+            VStack(spacing: 8) {
+                ColorWheelView(selectedColor: $selectedColor)
+                    .frame(width: 280, height: 280)
+                
+                Text("Click or drag to select a color")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.vertical, 16)
+    }
+    
+    // MARK: - Color Values Section View
+    private var colorValuesSection: some View {
+        VStack(spacing: 12) {
+            ColorFormatRow(
+                label: "HEX",
+                icon: "number",
+                value: ColorUtils.hexFromColor(selectedColor, preferences: preferences)
+            )
+            
+            Divider()
+            
+            ColorFormatRow(
+                label: "RGB",
+                icon: "circle.hexagongrid",
+                value: ColorUtils.rgbFromColor(selectedColor, preferences: preferences)
+            )
+            
+            Divider()
+            
+            ColorFormatRow(
+                label: "HSL",
+                icon: "paintbrush.pointed",
+                value: ColorUtils.hslFromColor(selectedColor, preferences: preferences)
+            )
+        }
+        .padding(.vertical, 12)
+    }
+    
+    // MARK: - Color History Section View
+    private var colorHistorySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Click any color to select it")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            
+            let selectedHex = ColorUtils.hexFromColor(selectedColor, preferences: preferences)
+            
+            LazyVGrid(columns: [
+                GridItem(.adaptive(minimum: 60, maximum: 80), spacing: 12)
+            ], spacing: 12) {
+                ForEach(Array(colorPicker.colorHistory.enumerated()), id: \.offset) { _, historyColor in
+                    let historyHex = ColorUtils.hexFromColor(historyColor, preferences: preferences)
+                    let isSelected = selectedHex == historyHex
+                    
+                    Button(action: {
+                        selectedColor = historyColor
+                    }) {
+                        VStack(spacing: 6) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(historyColor))
+                                .frame(height: 60)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(isSelected ? Color.accentColor : Color.primary.opacity(0.15),
+                                               lineWidth: isSelected ? 3 : 1)
+                                )
+                                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 2)
+                            
+                            Text(historyHex)
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .help("Select color: \(historyHex)")
+                }
+            }
+        }
+        .padding(.vertical, 12)
+    }
 }
 
-struct CopyButton: View {
+// MARK: - Color Format Row
+struct ColorFormatRow: View {
     let label: String
-    let color: NSColor
-    let format: (NSColor) -> String
+    let icon: String
+    let value: String
     @State private var copied = false
     
     var body: some View {
-        Button(action: {
-            let text = format(color)
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(text, forType: .string)
-            copied = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                copied = false
+        HStack(spacing: 16) {
+            // Format label with icon
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundColor(.accentColor)
+                    .frame(width: 20)
+                
+                Text(label)
+                    .font(.system(.body, design: .rounded))
+                    .fontWeight(.semibold)
+                    .frame(width: 45, alignment: .leading)
             }
-        }) {
-            Text(copied ? "✓ Copied" : label)
-                .frame(maxWidth: .infinity)
+            .frame(width: 90, alignment: .leading)
+            
+            // Value display
+            Text(value)
+                .font(.system(.body, design: .monospaced))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 14)
+                .background(Color(NSColor.textBackgroundColor))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                )
+            
+            // Copy button
+            Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(value, forType: .string)
+                copied = true
+                
+                // Haptic feedback
+                NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .default)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    copied = false
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: copied ? "checkmark.circle.fill" : "doc.on.doc.fill")
+                    Text(copied ? "Copied" : "Copy")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                .foregroundColor(copied ? .green : .accentColor)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(copied ? Color.green.opacity(0.1) : Color.accentColor.opacity(0.1))
+                )
+            }
+            .buttonStyle(.plain)
+            .help("Copy \(label) value to clipboard")
         }
-        .buttonStyle(.bordered)
+        .padding(.horizontal, 4)
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(Preferences())
 }

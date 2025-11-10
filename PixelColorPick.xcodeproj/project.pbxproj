@@ -43,7 +43,6 @@
 		991ECE002EAB072C00BB7684 /* privacy-policy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "privacy-policy.html"; sourceTree = "<group>"; };
 		99A127FB2EA86F1700623BA5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		99A127FC2EA86F1700623BA5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		99A1280A2EA871ED00623BA5 /* SimpleColorPicker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimpleColorPicker.entitlements; sourceTree = "<group>"; };
 		99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY_POLICY.md; sourceTree = "<group>"; };
 		99A1280D2EA8759300623BA5 /* Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot.png; sourceTree = "<group>"; };
 		99C070322EAAE23A00FFFC7C /* icon16x16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon16x16.png; sourceTree = "<group>"; };
@@ -128,7 +127,6 @@
 				99DA74172EA8203000A30637 /* Products */,
 				99A127FB2EA86F1700623BA5 /* LICENSE */,
 				99A127FC2EA86F1700623BA5 /* README.md */,
-				99A1280A2EA871ED00623BA5 /* SimpleColorPicker.entitlements */,
 				99A1280B2EA871F900623BA5 /* PRIVACY_POLICY.md */,
 				99A1280D2EA8759300623BA5 /* Screenshot.png */,
 				99C070392EAAE23A00FFFC7C /* Resources */,
