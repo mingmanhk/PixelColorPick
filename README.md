@@ -7,8 +7,68 @@
 
 A modern, lightweight, and open-source color picker for macOS, built with the power of SwiftUI. PixelColorPick is designed for developers, designers, and anyone who works with color.
 
+## 🎯 Promotional Text
+
+**"The color picker you've been waiting for."**
+
+Transform your creative workflow with Pixel Color Picker – the fastest, most elegant way to capture, explore, and copy colors on macOS. Whether you're designing a website, creating digital art, or perfecting your brand palette, get instant access to any color on your screen with pixel-perfect precision.
+
+✨ **Beautiful & Intuitive** – Modern SwiftUI interface that feels right at home on macOS  
+⚡ **Lightning Fast** – Pick colors in milliseconds with keyboard shortcuts  
+🎨 **Professional Tools** – Interactive color wheel, format conversion, and smart history  
+🔒 **Privacy First** – Works completely offline, no data collection, 100% open source  
+
+Perfect for designers, developers, artists, and anyone who takes color seriously.
+
+## 🆕 What's New in This Version
+
+**Version 2.0 - Major Update**
+
+🎨 **Enhanced UI/UX**
+- Redesigned main interface with app icon in header for better brand recognition
+- Optimized window sizes for perfect fit without scrolling (520×780)
+- Improved preferences window layout (480×720)
+
+⚡ **Performance & Polish**
+- Faster color picking with improved eyedropper tool
+- Smoother color wheel interactions
+- Enhanced haptic feedback for better user experience
+
+🎯 **New Features**
+- Auto-open color sampler on launch (optional)
+- Dynamic theme adaptation following system appearance
+- Improved color history with visual selection indicators
+- Better keyboard shortcut support (⌘P for quick pick)
+
+🔧 **Improvements**
+- More reliable launch at login functionality
+- Better stay-on-top window management
+- Refined color format options (uppercase hex, legacy syntax)
+- Enhanced copy feedback with visual confirmation
+
+🐛 **Bug Fixes**
+- Fixed color wheel precision issues
+- Improved color space conversions
+- Better handling of edge cases in format conversion
+
+## 📸 Screenshots
+
 <p align="center">
-  <img src="Screenshot.png" alt="PixelColorPick UI" width="600"/>
+  <img src="resources/PixelColorPicker.png" alt="Pixel Color Picker Main Interface" width="600"/>
+  <br/>
+  <em>Main Interface - Interactive color wheel and instant format conversion</em>
+</p>
+
+<p align="center">
+  <img src="resources/Preference.png" alt="Preferences Window" width="600"/>
+  <br/>
+  <em>Preferences - Customize your color picking experience</em>
+</p>
+
+<p align="center">
+  <img src="resources/Pixel Color Pick.png" alt="Available on the Mac App Store" width="600"/>
+  <br/>
+  <em>Available on the Mac App Store</em>
 </p>
 
 ---
